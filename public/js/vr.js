@@ -162,16 +162,20 @@ function dropSausages(){
     var geometry = new THREE.CylinderGeometry(1, 1, 5, 8);
     var material = new THREE.MeshNormalMaterial({ color: 0x0000ff });
     var temp = new THREE.Mesh( geometry, material );
-    temp.position.x = Math.random() * 75;
+    temp.position.x = Math.random() *15;
     temp.position.y = 50;
-    temp.position.z = Math.random() * 75;
+    temp.position.z = Math.random() * 15;
     sausages.push(temp);
     scene.add(temp);
 }
 
 function moveSausages(){
   for(var i = 0; i < sausages.length; i++){
-    sausages[i].position.y -= .05;
+    sausages[i].position.y -= .1;
+    if(sausages[i].position.y < -5){
+      sausages.splice(i, 1);
+      scene.remove(sausages[i]);
+    }
   }
 }
 
