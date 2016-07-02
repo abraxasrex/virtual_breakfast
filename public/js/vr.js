@@ -1,8 +1,8 @@
 var scene,
   camera,
   renderer,
+  material,
   donut,
-  hudText,
   hud,
   element,
   container,
@@ -10,6 +10,7 @@ var scene,
   controls,
   clock;
 var sausages = [];
+var score = 0;
 
   //matt d. lockyers's camera tracked vector
   //http://stackoverflow.com/questions/15696963/three-js-set-and-read-camera-look-vector
@@ -43,6 +44,8 @@ function animate() {
   // var radians = (camera.rotation.y * Math.PI) / 180;
 //   donut.position.x = -10 * (Math.cos(radians));
 //   donut.position.z = -10 * (Math.sin(radians));
+  hud.geometry = new THREE.TextGeometry(score, {size:2.5, height:2.5});
+
   donut.position.x = THREE.Utils.cameraLookDir(camera).x;
   donut.position.z = THREE.Utils.cameraLookDir(camera).z;
 
@@ -143,13 +146,12 @@ function init() {
   scene.add(floor);
 
   // create HUD
- hudText = new THREE.TextGeometry('TIMER', {size:2.5, height:2.5});
+ var hudText = new THREE.TextGeometry(score, {size:2.5, height:2.5});
  var hudMaterial = new THREE.MeshNormalMaterial({ color: 0x0000ff });
  hud =  new THREE.Mesh( hudText, hudMaterial );
- hud.position.set(2.5, 10, 2.5);
- hud.rotateY(Math.PI * 1.5);
+ hud.position.set(10, 25, 10);
+ hud.rotateY(Math.PI * 1.9);
  scene.add(hud);
-
 
   //animate by clock
   clock = new THREE.Clock();
