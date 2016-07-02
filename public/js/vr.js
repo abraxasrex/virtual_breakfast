@@ -11,6 +11,7 @@ var scene,
   clock;
 var sausages = [];
 var score = 0;
+var health = 0;
 
   //matt d. lockyers's camera tracked vector
   //http://stackoverflow.com/questions/15696963/three-js-set-and-read-camera-look-vector
@@ -175,6 +176,12 @@ function moveSausages(){
     if(sausages[i].position.y < -5){
       sausages.splice(i, 1);
       scene.remove(sausages[i]);
+      health -= 1;
+    }
+    if(donut.position.distanceTo(sausages[i].position) < 5){
+      sausages.splice(i, 1);
+      scene.remove(sausages[i]);
+      score += 1;
     }
   }
 }
