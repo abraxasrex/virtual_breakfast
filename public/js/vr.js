@@ -37,6 +37,10 @@ function setOrientationControls(e) {
   window.removeEventListener('deviceorientation', setOrientationControls, true);
 }
 
+function getRandomIntInclusive(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function animate() {
   requestAnimationFrame(animate);
   update(clock.getDelta());
@@ -46,7 +50,6 @@ function animate() {
   // var radians = (camera.rotation.y * Math.PI) / 180;
 //   donut.position.x = -10 * (Math.cos(radians));
 //   donut.position.z = -10 * (Math.sin(radians));
-  hud.geometry = new THREE.TextGeometry(hudText, {size:1, height:1});
 
   donut.position.x = THREE.Utils.cameraLookDir(camera).x;
   donut.position.z = THREE.Utils.cameraLookDir(camera).z;
@@ -55,8 +58,13 @@ function animate() {
   hud.position.z = THREE.Utils.cameraLookDir(camera).z;
   hud.lookAt(camera.position);
   for(var i = 0; i < sausages.length; i++){
-    processSausage(sausage[i]);
+    processSausage(sausages[i]);
   }
+}
+
+function hudChange(){
+  hudText = 'score: ' + score + ' health: ' + health;
+  hud.geometry = new THREE.TextGeometry(hudText, {size:1, height:1});
 }
 
 function resize() {
@@ -151,7 +159,7 @@ function init() {
 
   // create HUD
   hudText = 'score: ' + score + ' health: ' + health;
-  var textObj = new THREE.TextGeometry(hudText, {size:2.5, height:2.5});
+  var textObj = new THREE.TextGeometry(hudText, {size:1, height:1});
   var hudMaterial = new THREE.MeshNormalMaterial({ color: 0x0000ff });
   hud = new THREE.Mesh( textObj, hudMaterial );
   hud.position.set(10, 25, 10);
@@ -167,27 +175,29 @@ function dropSausages(){
   var geometry = new THREE.CylinderGeometry(1, 1, 5, 8);
   var material = new THREE.MeshNormalMaterial({ color: 0x0000ff });
   var temp = new THREE.Mesh( geometry, material );
-  temp.position.x = Math.random() * 15;
+  temp.position.x = getRandomIntInclusive(-15, 15);
   temp.position.y = 50;
-  temp.position.z = Math.random() * 15;
+  temp.position.z = getRandomIntInclusive(-15,15);
   sausages.push(temp);
   scene.add(temp);
 }
 
 function processSausage(sausage){
-    sausage.position.y -= .1;
+  sausage.position.y -= .1;
 
-    if(sausage.position.y < -2.5){
-      sausages.splice(sausages[sausage], 1);
-      scene.remove(sausage);
-      health -= 1;
-    }
-    if(donut.position.distanceTo(sausage.position) < 4){
-      sausages.splice(sausages[sausage], 1);
-      scene.remove(sausage);
-      score += 1;
-    }
+  if(sausage.position.y < -2.5){
+    sausages.splice(sausages[sausage], 1);
+    scene.remove(sausage);
+    health -= 1;
+    hudChange();
   }
+  if(donut.position.distanceTo(sausage.position) < 4){
+    sausages.splice(sausages[sausage], 1);
+    scene.remove(sausage);
+    score += 1;
+    hudChange();
+  }
+}
 
 init();
 setInterval(dropSausages, 4000);
