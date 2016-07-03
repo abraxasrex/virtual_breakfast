@@ -6,6 +6,8 @@ var scene,
   donut,
   sausageMaterial,
   hud,
+  hudText,
+  currentGame,
   element,
   container,
   effect,
@@ -15,13 +17,12 @@ var sausages = [];
 var score = 0;
 var health = 10;
 var playRadius = 10;
-var origin = new THREE.Vector3(0, 0, -10);
-var hudText = 'score: ' + score + ' health: ' + health;
 
 //palette
 var sunlight = new THREE.Color('rgb(255, 255, 102)');
-//var boldYellow = new THREE.Color('rgb(255, 255, 0)');
+var yellowText = new THREE.Color('rgb(255, 255, 0)');
 var white = new THREE.Color('rgb(100,100,100)');
+var orangeText = new THREE.Color('rgb(255, 102, 0)');
 
 // math helpers
 function randomDegree(){
@@ -181,7 +182,7 @@ function init() {
   // create HUD
   hudText = 'score: ' + score + '   health: ' + health;
   var textObj = new THREE.TextGeometry(hudText, {size:7.5, height:1});
-  var hudMaterial = new THREE.MeshNormalMaterial({ color: 0x0000ff });
+  var hudMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
   hud = new THREE.Mesh( textObj, hudMaterial );
   scene.add(hud);
   hud.position.set(0,37.5,25);
@@ -202,7 +203,6 @@ function dropSausages(){
 
 function processSausage(sausage){
   sausage.position.y -= .1;
-
   if(sausage.position.y < -2.5){
     sausages.splice(sausages[sausage], 1);
     //scene.children.splice(scene.children.indexOf(sausage), 1);
@@ -220,4 +220,4 @@ function processSausage(sausage){
 }
 
 init();
-setInterval(dropSausages, 4000);
+currentGame = setInterval(dropSausages, 4000);
