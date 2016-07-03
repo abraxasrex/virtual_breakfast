@@ -140,7 +140,7 @@ function init() {
   scene.add(lightScene);
 
   //floor texture
-  var floorTexture = THREE.ImageUtils.loadTexture('textures/wood.jpg');
+  var floorTexture = THREE.ImageUtils.loadTexture('textures/plate.jpg');
   floorTexture.wrapS = THREE.RepeatWrapping;
   floorTexture.wrapT = THREE.RepeatWrapping;
   floorTexture.repeat = new THREE.Vector2(50, 50);
