@@ -11,7 +11,8 @@ var scene,
   clock;
 var sausages = [];
 var score = 0;
-var health = 0;
+var health = 10;
+var hudText = 'score: ' + score + ' health: ' + health;
 
   //matt d. lockyers's camera tracked vector
   //http://stackoverflow.com/questions/15696963/three-js-set-and-read-camera-look-vector
@@ -45,7 +46,7 @@ function animate() {
   // var radians = (camera.rotation.y * Math.PI) / 180;
 //   donut.position.x = -10 * (Math.cos(radians));
 //   donut.position.z = -10 * (Math.sin(radians));
-  hud.geometry = new THREE.TextGeometry(score, {size:2.5, height:2.5});
+  hud.geometry = new THREE.TextGeometry(hudText, {size:1, height:1});
 
   donut.position.x = THREE.Utils.cameraLookDir(camera).x;
   donut.position.z = THREE.Utils.cameraLookDir(camera).z;
@@ -53,7 +54,9 @@ function animate() {
   hud.position.x = THREE.Utils.cameraLookDir(camera).x;
   hud.position.z = THREE.Utils.cameraLookDir(camera).z;
   hud.lookAt(camera.position);
-  moveSausages();
+  for(var i = 0; i < sausages.length; i++){
+    processSausage(sausage[i]);
+  }
 }
 
 function resize() {
@@ -147,7 +150,8 @@ function init() {
   scene.add(floor);
 
   // create HUD
- var hudText = new THREE.TextGeometry(score, {size:2.5, height:2.5});
+  var newHudText = 'score: ' + score + ' health: ' + health;
+ var hudText = new THREE.TextGeometry(newHudText, {size:2.5, height:2.5});
  var hudMaterial = new THREE.MeshNormalMaterial({ color: 0x0000ff });
  hud =  new THREE.Mesh( hudText, hudMaterial );
  hud.position.set(10, 25, 10);
@@ -170,21 +174,20 @@ function dropSausages(){
     scene.add(temp);
 }
 
-function moveSausages(){
-  for(var i = 0; i < sausages.length; i++){
-    sausages[i].position.y -= .1;
-    if(sausages[i].position.y < -5){
-      sausages.splice(i, 1);
-      scene.remove(sausages[i]);
+function moveSausage(sausage){
+    sausage.position.y -= .1;
+
+    if(sausage.position.y < -5){
+      sausages.splice(sausages[sausage], 1);
+      scene.remove(sausage);
       health -= 1;
     }
-    if(donut.position.distanceTo(sausages[i].position) < 5){
-      sausages.splice(i, 1);
-      scene.remove(sausages[i]);
+    if(donut.position.distanceTo(sausage.position) < 4){
+      sausages.splice(sausages[sausage], 1);
+      scene.remove(sausage);
       score += 1;
     }
   }
-}
 
 init();
 setInterval(dropSausages, 2000);
