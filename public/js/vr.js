@@ -150,13 +150,13 @@ function init() {
   scene.add(floor);
 
   // create HUD
-  var newHudText = 'score: ' + score + ' health: ' + health;
- var hudText = new THREE.TextGeometry(newHudText, {size:2.5, height:2.5});
- var hudMaterial = new THREE.MeshNormalMaterial({ color: 0x0000ff });
- hud =  new THREE.Mesh( hudText, hudMaterial );
- hud.position.set(10, 25, 10);
- hud.rotateY(Math.PI * 1.9);
- scene.add(hud);
+  hudText = 'score: ' + score + ' health: ' + health;
+  var textObj = new THREE.TextGeometry(hudText, {size:2.5, height:2.5});
+  var hudMaterial = new THREE.MeshNormalMaterial({ color: 0x0000ff });
+  hud = new THREE.Mesh( textObj, hudMaterial );
+  hud.position.set(10, 25, 10);
+  hud.rotateY(Math.PI * 1.9);
+  scene.add(hud);
 
   //animate by clock
   clock = new THREE.Clock();
@@ -164,20 +164,20 @@ function init() {
 }
 
 function dropSausages(){
-    var geometry = new THREE.CylinderGeometry(1, 1, 5, 8);
-    var material = new THREE.MeshNormalMaterial({ color: 0x0000ff });
-    var temp = new THREE.Mesh( geometry, material );
-    temp.position.x = Math.random() *15;
-    temp.position.y = 50;
-    temp.position.z = Math.random() * 15;
-    sausages.push(temp);
-    scene.add(temp);
+  var geometry = new THREE.CylinderGeometry(1, 1, 5, 8);
+  var material = new THREE.MeshNormalMaterial({ color: 0x0000ff });
+  var temp = new THREE.Mesh( geometry, material );
+  temp.position.x = Math.random() * 15;
+  temp.position.y = 50;
+  temp.position.z = Math.random() * 15;
+  sausages.push(temp);
+  scene.add(temp);
 }
 
-function moveSausage(sausage){
+function processSausage(sausage){
     sausage.position.y -= .1;
 
-    if(sausage.position.y < -5){
+    if(sausage.position.y < -2.5){
       sausages.splice(sausages[sausage], 1);
       scene.remove(sausage);
       health -= 1;
@@ -190,4 +190,4 @@ function moveSausage(sausage){
   }
 
 init();
-setInterval(dropSausages, 2000);
+setInterval(dropSausages, 4000);
