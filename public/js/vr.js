@@ -3,6 +3,7 @@ var scene,
   renderer,
   material,
   donut,
+  sausageMaterial,
   hud,
   element,
   container,
@@ -12,19 +13,35 @@ var scene,
 var sausages = [];
 var score = 0;
 var health = 10;
+var playRadius = 10;
 var hudText = 'score: ' + score + ' health: ' + health;
+
+//palette
+var sunlight = new THREE.Color('rgb(255, 255, 102)');
+//var boldYellow = new THREE.Color('rgb(255, 255, 0)');
+var white = new THREE.Color('rgb(100,100,100)');
+
+// math helpers
+
+function randomDegree(){
+  return Math.random() * 360;
+}
+
+function randomRadian(){
+  return (randomDegree() * Math.PI) / 180;
+}
 
   //matt d. lockyers's camera tracked vector
   //http://stackoverflow.com/questions/15696963/three-js-set-and-read-camera-look-vector
 THREE.Utils = {
   cameraLookDir: function(camera) {
-    var vector = new THREE.Vector3(0, 0, -15);
+    var vector = new THREE.Vector3(0, 0, -1 * playRadius);
     vector.applyEuler(camera.rotation, camera.rotation.order);
     return vector;
   }
 };
 
-// Our preferred controls via DeviceOrientation
+// device orientation controls
 function setOrientationControls(e) {
   if (!e.alpha) {
     return;
@@ -37,26 +54,18 @@ function setOrientationControls(e) {
   window.removeEventListener('deviceorientation', setOrientationControls, true);
 }
 
-function getRandomIntInclusive(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function animate() {
   requestAnimationFrame(animate);
   update(clock.getDelta());
   render(clock.getDelta());
-  //move donut along circumference of vision
 
-  // var radians = (camera.rotation.y * Math.PI) / 180;
-//   donut.position.x = -10 * (Math.cos(radians));
-//   donut.position.z = -10 * (Math.sin(radians));
-
+ // reorient donut and hud
   donut.position.x = THREE.Utils.cameraLookDir(camera).x;
   donut.position.z = THREE.Utils.cameraLookDir(camera).z;
-
-  hud.position.x = THREE.Utils.cameraLookDir(camera).x;
-  hud.position.z = THREE.Utils.cameraLookDir(camera).z;
+  hud.position.x = THREE.Utils.cameraLookDir(camera).x * 25 - 10;
+  hud.position.z = THREE.Utils.cameraLookDir(camera).z * 25;
   hud.lookAt(camera.position);
+
   for(var i = 0; i < sausages.length; i++){
     processSausage(sausages[i]);
   }
@@ -64,7 +73,7 @@ function animate() {
 
 function hudChange(){
   hudText = 'score: ' + score + ' health: ' + health;
-  hud.geometry = new THREE.TextGeometry(hudText, {size:1, height:1});
+  hud.geometry = new THREE.TextGeometry(hudText, {size:50, height:50});
 }
 
 function resize() {
@@ -106,15 +115,33 @@ function init() {
   scene.add(camera);
   renderer = new THREE.WebGLRenderer();
   element = renderer.domElement;
+  renderer.setClearColor( sunlight, 0);
   container = document.getElementById('webglviewer');
   container.appendChild(element);
+
   // init donut torus
-  geometry = new THREE.TorusGeometry( 2.5, 0.25, 100, 100);
-  material = new THREE.MeshNormalMaterial({ color: 0x0000ff });
+  geometry = new THREE.TorusGeometry( 2.5, 0.75, 100, 100);
+  var donutTexture = THREE.ImageUtils.loadTexture('textures/donut.jpg');
+  donutTexture.anisotropy = renderer.getMaxAnisotropy();
+  material = new THREE.MeshPhongMaterial({
+    shading: THREE.FlatShading,
+    map: donutTexture
+  });
   donut = new THREE.Mesh( geometry, material );
-  donut.position.set(0,15,10);
+  donut.position.set(0,15,5);
   donut.rotation.x = -1;
   scene.add(donut);
+
+  //sausage texture
+  var sausageTexture = THREE.ImageUtils.loadTexture('textures/sausage.jpg');
+  //  floorTexture.wrapS = THREE.RepeatWrapping;
+  //  floorTexture.wrapT = THREE.RepeatWrapping;
+  //donutTexture.repeat = new THREE.Vector2(50, 50);
+  sausageTexture.anisotropy = renderer.getMaxAnisotropy();
+  sausageMaterial = new THREE.MeshPhongMaterial({
+    shading: THREE.FlatShading,
+    map: sausageTexture
+  });
 
   // stereo vision
   effect = new THREE.StereoEffect(renderer);
@@ -128,41 +155,43 @@ function init() {
   );
   controls.noPan = true;
   controls.noZoom = true;
+
   // add orientation controls
   window.addEventListener('deviceorientation', setOrientationControls, true);
 
-  // Lighting
-  var light = new THREE.PointLight(0xfca4c5, 2, 100);
+  // set lighting
+  var light = new THREE.PointLight(boldYellow, 2, 100);
   light.position.set(50, 50, 50);
   scene.add(light);
-  var lightScene = new THREE.PointLight(0x7658ef, 2, 100);
+  var boldYellow = new THREE.Color('rgb(255, 255, 0)');
+  var lightScene = new THREE.PointLight(white, 2, 100);
   lightScene.position.set(0, 5, 0);
   scene.add(lightScene);
 
   //floor texture
   var floorTexture = THREE.ImageUtils.loadTexture('textures/plate.jpg');
-  floorTexture.wrapS = THREE.RepeatWrapping;
-  floorTexture.wrapT = THREE.RepeatWrapping;
-  floorTexture.repeat = new THREE.Vector2(50, 50);
+//  floorTexture.wrapS = THREE.RepeatWrapping;
+//  floorTexture.wrapT = THREE.RepeatWrapping;
+//  floorTexture.repeat = new THREE.Vector2(50, 50);
   floorTexture.anisotropy = renderer.getMaxAnisotropy();
   var floorMaterial = new THREE.MeshPhongMaterial({
-    color: 0xffffff,
-    specular: 0xffffff,
-    shininess: 20,
+  //  color: 0xffffff,
+  //  specular: 0xffffff,
+  //  shininess: 20,
     shading: THREE.FlatShading,
     map: floorTexture
   });
-  var geometry = new THREE.PlaneBufferGeometry(1000, 1000);
+  var geometry = new THREE.PlaneBufferGeometry(100, 100);
   var floor = new THREE.Mesh(geometry, floorMaterial);
   floor.rotation.x = -Math.PI / 2;
   scene.add(floor);
 
   // create HUD
   hudText = 'score: ' + score + ' health: ' + health;
-  var textObj = new THREE.TextGeometry(hudText, {size:1, height:1});
+  var textObj = new THREE.TextGeometry(hudText, {size:5, height:5});
   var hudMaterial = new THREE.MeshNormalMaterial({ color: 0x0000ff });
   hud = new THREE.Mesh( textObj, hudMaterial );
-  hud.position.set(10, 25, 10);
+  hud.position.set(7.5, 17.5, 100);
   hud.rotateY(Math.PI * 1.9);
   scene.add(hud);
 
@@ -172,14 +201,16 @@ function init() {
 }
 
 function dropSausages(){
-  var geometry = new THREE.CylinderGeometry(1, 1, 5, 8);
-  var material = new THREE.MeshNormalMaterial({ color: 0x0000ff });
-  var temp = new THREE.Mesh( geometry, material );
-  temp.position.x = getRandomIntInclusive(-15, 15);
-  temp.position.y = 50;
-  temp.position.z = getRandomIntInclusive(-15,15);
-  sausages.push(temp);
-  scene.add(temp);
+  var geometry = new THREE.CylinderGeometry(1, 1, 5, 16);
+  var newSausage = new THREE.Mesh( geometry, sausageMaterial );
+  newSausage.position.y = 50;
+
+  var radian = randomRadian();
+  newSausage.position.x = playRadius * Math.cos(radian);
+  newSausage.position.z = playRadius * Math.sin(radian);
+
+  sausages.push(newSausage);
+  scene.add(newSausage);
 }
 
 function processSausage(sausage){
