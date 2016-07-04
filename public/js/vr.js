@@ -7,7 +7,6 @@ var scene,
   sausageMaterial,
   hud,
   hudText,
-  currentGame,
   element,
   container,
   effect,
@@ -17,6 +16,8 @@ var sausages = [];
 var score = 0;
 var health = 10;
 var playRadius = 10;
+var sausageRate = 4000;
+var level = 1;
 
 //palette
 var sunlight = new THREE.Color('rgb(255, 255, 102)');
@@ -201,7 +202,34 @@ function dropSausages(){
   scene.add(newSausage);
 }
 
+function winLevel(){
+  var parsed = parseInt(level) + 1;
+  hudText = 'you beat level ' + level + ' ' + 'level ' + parsed + ' incoming';
+  hud.geometry = new THREE.TextGeometry(hudText, {size:7.5, height:1});
+  level += 1;
+
+  currentGame.clearInterval();
+  sausages.forEach(function(sausage){
+    scene.remove(sausage);
+  });
+  sausages = [];
+  setTimeout(nextLevel, 2000);
+}
+
+function nextLevel(){
+  sausageRate = sausageRate / 1.5;
+  health = 10;
+  hudText = 'score: ' + score + '   health: ' + health;
+  hud.geometry = new THREE.TextGeometry(hudText, {size:7.5, height:1});
+
+  currentGame = setInterval(dropSausages, sausageRate);
+}
+
 function processSausage(sausage){
+  if(score >= (15 * level)){
+    winLevel();
+    return;
+  }
   sausage.position.y -= .1;
   if(sausage.position.y < -2.5){
     sausages.splice(sausages[sausage], 1);
@@ -220,4 +248,4 @@ function processSausage(sausage){
 }
 
 init();
-currentGame = setInterval(dropSausages, 4000);
+currentGame = setInterval(dropSausages, sausageRate);
