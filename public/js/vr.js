@@ -5,13 +5,17 @@ var scene,
   enemyMaterial,
   hud,
   element,
+  bigScreen1,
+  bigScreen2,
+  bigScreen3,
+  bigScreen4,
   container,
   effect,
   controls,
   clock;
 var enemies = [];
 var score = 0;
-var health = 10;
+var health = 5;
 var playRadius = 10;
 var enemyInterval = 4000;
 var enemyDropRate = .1;
@@ -19,12 +23,76 @@ var level = 1;
 var currentGame;
 var donutHeight = 12.5;
 var hudHeight = 37.5;
+var gameOn = false;
 
 //palette
 var sunlight = new THREE.Color('rgb(255, 255, 102)');
 var white = new THREE.Color('rgb(100,100,100)');
 var orangeText = new THREE.Color('rgb(255, 102, 0)');
 var boldYellow = new THREE.Color('rgb(255, 255, 0)');
+
+// win / open screen
+function tiltGameOn(e){
+  if (!e.alpha) {
+    return;
+  }
+  if(e.beta > 120){
+    initPlayer();
+    gameOn = true;
+    currentGame = setInterval(dropEnemy, enemyInterval);
+    window.removeEventListener('deviceorientation', tiltGameOn);
+    scene.remove(bigScreen1);
+    scene.remove(bigScreen2);
+    scene.remove(bigScreen3);
+  }
+  //new game handler
+  if(level > 1){
+    score = 0;
+    health = 10;
+    playRadius = 10;
+    enemyInterval = 4000;
+    enemyDropRate = .1;
+    level = 1;
+    scene.remove(bigScreen4);
+  }
+}
+
+function openScreen(){
+  var screenGeometry1 = new THREE.TextGeometry('Virtua Breakfast', {size:1.8, height:0.1});
+  var screenGeometry2 = new THREE.TextGeometry('Look around to move donut, catch falling food', {size:0.5, height:0.1});
+  var screenGeometry3 = new THREE.TextGeometry('Look up to play', {size:1, height:0.1});
+  var screenMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
+  bigScreen1 = new THREE.Mesh( screenGeometry1, screenMaterial );
+  bigScreen2 = new THREE.Mesh( screenGeometry2, screenMaterial );
+  bigScreen3 = new THREE.Mesh( screenGeometry3, screenMaterial );
+  scene.add(bigScreen1);
+  scene.add(bigScreen2);
+  scene.add(bigScreen3);
+  bigScreen1.position.set(10,17.5,10);
+  bigScreen2.position.set(10,15,10);
+  bigScreen3.position.set(10,10,10);
+  bigScreen1.rotation.y = Math.PI;
+  bigScreen2.rotation.y = Math.PI;
+  bigScreen3.rotation.y = Math.PI;
+  window.addEventListener('deviceorientation', tiltGameOn);
+}
+
+function loseGame(){
+  window.clearInterval(currentGame);
+  enemies.forEach(function(enemy){
+    scene.remove(enemy);
+  });
+  enemies = [];
+  scene.remove(hud);
+  scene.remove(donut);
+  var screenGeometry4 = new THREE.TextGeometry('Look up to play again.', {size:1.8, height:0.1});
+  var screenMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
+  bigScreen4 = new THREE.Mesh( screenGeometry4, screenMaterial );
+  scene.add(bigScreen4);
+  bigScreen4.position.set(10,10,10);
+  bigScreen4.rotation.y = Math.PI;
+  window.addEventListener('deviceorientation', tiltGameOn);
+}
 
 // math helpers
 function randomDegree(){
@@ -61,13 +129,16 @@ function animate() {
   render(clock.getDelta());
 
  // reorient donut and hud to camera
-  donut.position.set(THREE.Utils.cameraLookDir(camera).x, donutHeight, THREE.Utils.cameraLookDir(camera).z);
-  hud.position.set(THREE.Utils.cameraLookDir(camera).x * 10, hudHeight, THREE.Utils.cameraLookDir(camera).z * 10);
-  hud.lookAt(donut.position);
+  if(gameOn){
+    donut.position.set(THREE.Utils.cameraLookDir(camera).x, donutHeight, THREE.Utils.cameraLookDir(camera).z);
+    hud.position.set(THREE.Utils.cameraLookDir(camera).x * 10, hudHeight, THREE.Utils.cameraLookDir(camera).z * 10);
+    hud.lookAt(donut.position);
 
-  for(var i = 0; i < enemies.length; i++){
-    handleEnemies(enemies[i]);
+    for(var i = 0; i < enemies.length; i++){
+      handleEnemies(enemies[i]);
+    }
   }
+
 }
 
 function createHudString(){
@@ -109,6 +180,28 @@ function fullscreen() {
   }
 }
 
+function initPlayer(){
+  var donutGeometry = new THREE.TorusGeometry( 2.5, 0.75, 100, 100);
+  var donutTexture = THREE.ImageUtils.loadTexture('textures/donut.jpg');
+  var donutMaterial = new THREE.MeshLambertMaterial({
+    shading: THREE.FlatShading,
+    wrapT: THREE.RepeatWrapping,
+    wrapS:THREE.RepeatWrapping,
+    map: donutTexture
+  });
+  donut = new THREE.Mesh( donutGeometry, donutMaterial );
+  donut.position.set(0,12.5,5);
+  donut.rotation.x = -1;
+  scene.add(donut);
+
+  var textObj = new THREE.TextGeometry(createHudString(), {size:7.5, height:1});
+  var hudMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
+  hud = new THREE.Mesh( textObj, hudMaterial );
+  scene.add(hud);
+  hud.position.set(0,37.5,25);
+
+}
+
 function init() {
   // init scene and cam
   scene = new THREE.Scene();
@@ -122,18 +215,6 @@ function init() {
   container.appendChild(element);
 
   // init donut torus
-  var donutGeometry = new THREE.TorusGeometry( 2.5, 0.75, 100, 100);
-  var donutTexture = THREE.ImageUtils.loadTexture('textures/donut.jpg');
-  var material = new THREE.MeshLambertMaterial({
-    shading: THREE.FlatShading,
-    wrapT: THREE.RepeatWrapping,
-    wrapS:THREE.RepeatWrapping,
-    map: donutTexture
-  });
-  donut = new THREE.Mesh( donutGeometry, material );
-  donut.position.set(0,12.5,5);
-  donut.rotation.x = -1;
-  scene.add(donut);
 
   //enemy texture
   var enemyTexture = THREE.ImageUtils.loadTexture('textures/orange.jpg');
@@ -175,11 +256,6 @@ function init() {
   scene.add(floor);
 
   // create HUD
-  var textObj = new THREE.TextGeometry(createHudString(), {size:7.5, height:1});
-  var hudMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
-  hud = new THREE.Mesh( textObj, hudMaterial );
-  scene.add(hud);
-  hud.position.set(0,37.5,25);
 
   //animate by clock
   clock = new THREE.Clock();
@@ -187,7 +263,7 @@ function init() {
 }
 
 function dropEnemy(){
-  var geometry = new THREE.SphereGeometry(1, 32, 32);
+  var geometry = new THREE.SphereGeometry(1, 64, 64);
   var newEnemy = new THREE.Mesh( geometry, enemyMaterial );
   var radian = randomRadian();
   newEnemy.position.set(playRadius * Math.cos(radian), 37.5, playRadius * Math.sin(radian));
@@ -222,6 +298,9 @@ function handleEnemies(enemy){
     winLevel();
     return;
   }
+  if(health < 0){
+    loseGame();
+  }
   enemy.position.y -= enemyDropRate;
   if(enemy.position.y < -2.5){
     enemies.splice(enemies[enemy], 1);
@@ -238,4 +317,4 @@ function handleEnemies(enemy){
 }
 
 init();
-currentGame = setInterval(dropEnemy, enemyInterval);
+openScreen();
