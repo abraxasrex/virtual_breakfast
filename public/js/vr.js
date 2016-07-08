@@ -75,29 +75,7 @@ var donutMaterial = new THREE.MeshLambertMaterial({
 });
 
 // win / open screen
-function tiltGameOn(e){
-  if (!e.alpha) {
-    return;
-  }
-  if(e.beta > 160){
-    // new game handler
-    if(health < 5){
-      score = 0;
-      health = 10;
-      playRadius = 10;
-      enemyInterval = 4000;
-      enemyDropRate = .1;
-      level = 1;
-      scene.remove(bigScreen4);
-    }
-    initPlayer();
-    currentGame = setInterval(dropEnemy, enemyInterval);
-    scene.remove(bigScreen1);
-    scene.remove(bigScreen2);
-    scene.remove(bigScreen3);
-    window.removeEventListener('deviceorientation', tiltGameOn);
-  }
-}
+
 
 function openScreen(){
   var screenGeometry1 = new THREE.TextGeometry('Virtua Breakfast', {size:1.8, height:0.1});
@@ -117,8 +95,6 @@ function openScreen(){
   bigScreen3.rotation.y = Math.PI;
   window.addEventListener('deviceorientation', tiltGameOn);
 }
-
-
 
 // math helpers
 function randomDegree(){
@@ -156,6 +132,30 @@ function setOrientationControls(e) {
   controls.update();
   element.addEventListener('click', fullscreen, false);
   window.removeEventListener('deviceorientation', setOrientationControls, true);
+}
+
+function tiltGameOn(e){
+  if (!e.alpha) {
+    return;
+  }
+  if(e.beta > 160){
+    // new game handler
+    if(health < 5){
+      score = 0;
+      health = 10;
+      playRadius = 10;
+      enemyInterval = 4000;
+      enemyDropRate = .1;
+      level = 1;
+      scene.remove(bigScreen4);
+    }
+    initPlayer();
+    currentGame = setInterval(dropEnemy, enemyInterval);
+    scene.remove(bigScreen1);
+    scene.remove(bigScreen2);
+    scene.remove(bigScreen3);
+    window.removeEventListener('deviceorientation', tiltGameOn);
+  }
 }
 
 function animate() {
@@ -261,6 +261,7 @@ function init() {
   //animate by clock
   clock = new THREE.Clock();
   animate();
+  openScreen();
 }
 
 // game events
@@ -335,4 +336,3 @@ function handleEnemies(enemy){
 }
 
 init();
-openScreen();
