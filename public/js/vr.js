@@ -43,6 +43,13 @@ THREE.Utils = {
   }
 };
 
+function loadTexture(loader, texture, global_texture){
+  loader.load(texture,
+      function (texture, global_texture){
+        global_texture = texture;
+      });
+}
+
 function setOrientationControls(e) {
   if (!e.alpha) {
     return;
@@ -127,9 +134,15 @@ function initWorld() {
   orangeText = new THREE.Color('rgb(255, 102, 0)');
   boldYellow = new THREE.Color('rgb(255, 255, 0)');
 
-  enemyTexture = THREE.ImageUtils.loadTexture('textures/orange.jpg');
-  donutTexture = THREE.ImageUtils.loadTexture('textures/donut.jpg');
-  floorTexture = THREE.ImageUtils.loadTexture('textures/plate.jpg');
+  // var loader = new THREE.TextureLoader();
+  // loader.crossOrigin = '';
+  // loadTexture(loader,'../textures/orange.jpg', enemyTexture);
+  // loadTexture(loader,'../textures/donut.jpg', donutTexture);
+  // loadTexture(loader, '../textures/plate.jpg', floorTexture);
+  //THREE.ImageUtils.crossOrigin = '';
+  enemyTexture = THREE.ImageUtils.loadTexture('./textures/orange.jpg');
+  donutTexture = THREE.ImageUtils.loadTexture('./textures/donut.jpg');
+  floorTexture = THREE.ImageUtils.loadTexture('./textures/plate.jpg');
 
   screenMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
   enemyMaterial = new THREE.MeshPhongMaterial({

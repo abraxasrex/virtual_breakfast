@@ -4,14 +4,48 @@
     <meta charset="utf-8">
     <title>virtua breakfast tests</title>
     <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+    <!--  -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <style>
+      body {
+        margin: 0px;
+        overflow: hidden;
+      }
+      #webglviewer {
+        bottom: 0;
+        left: 0;
+        position: absolute;
+        right: 0;
+        top: 0;
+      }
+      #mocha{
+        background-color: white;
+        position: absolute;
+        top:0;
+        left:0;
+        z-index: 2;
+      }
+    </style>
+    <!-- -->
 </head>
 <body>
+  <!-- -->
+  <div id="webglviewer"></div>
+  <!-- -->
   <div id="mocha"></div>
   <script src="../node_modules/chai/chai.js"></script>
   <script src="../node_modules/mocha/mocha.js"></script>
+  <!-- -->
+  <script src="../public/js/three.min.js"></script>
+  <script src="../public/js/StereoEffect.js"></script>
+  <script src="../public/js/DeviceOrientationControls.js"></script>
+  <script src="../public/js/OrbitControls.js"></script>
+  <script src="../public/js/helvetiker_regular.typeface.js"></script>
   <script src="../public/js/vr.js"></script>
+  <!-- -->
   <script>mocha.setup('bdd')</script>
-  <script src="test.js"></script>
+  <script src="js/test.js"></script>
   <script>
   mocha.run();
   </script>
