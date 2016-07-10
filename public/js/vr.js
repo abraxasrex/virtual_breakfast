@@ -70,9 +70,11 @@ function animate() {
     donut.position.set(THREE.Utils.cameraLookDir(camera).x, gameTracker.donutHeight, THREE.Utils.cameraLookDir(camera).z);
     hud.position.set(THREE.Utils.cameraLookDir(camera).x * 10, gameTracker.hudHeight, THREE.Utils.cameraLookDir(camera).z * 10);
     hud.lookAt(donut.position);
-    for(var i = 0; i < gameTracker.enemies.length; i++){
-      handleEnemies(gameTracker.enemies[i]);
-    }
+    //for(var i = 0; i < gameTracker.enemies.length; i++){
+      //handleEnemies(gameTracker.enemies[i]);
+      updateEnemies();
+      updateGameStatus();
+  //  }
   }
 }
 
@@ -249,22 +251,28 @@ function resetStats(){
 }
 
 function winLevel(){
+  gameTracker.gameInProgress = false;
   window.clearInterval(gameTracker.currentGame);
   var parsed = parseInt(gameTracker.level) + 1;
   var newHudText = 'level ' + parsed;
   hud.geometry = new THREE.TextGeometry(newHudText, {size:7.5, height:1});
   gameTracker.level += 1;
   gameTracker.enemies.forEach(function(enemy){
-    scene.remove(enemy);
+    // var enemy = scene.getObjectById(id);
+    // scene.remove(enemy);
+    removeEnemy(enemy);
   });
   gameTracker.enemies = [];
   setTimeout(nextLevel, 2000);
 }
 
 function loseGame(){
+  gameTracker.gameInProgress = false;
   window.clearInterval(gameTracker.currentGame);
   gameTracker.enemies.forEach(function(enemy){
-    scene.remove(enemy);
+    // var enemy = scene.getObjectById(id);
+    // scene.remove(enemy);
+    removeEnemy(enemy);
   });
   gameTracker.enemies = [];
   scene.remove(hud);
@@ -278,11 +286,12 @@ function loseGame(){
 }
 
 function nextLevel(){
-  gameTracker.enemyInterval = gameTracker.enemyInterval / 1.5;
-  gameTracker.enemyDropRate += 0.025;
+  gameTracker.enemyInterval = gameTracker.enemyInterval / 1.25;
+  gameTracker.enemyDropRate += 0.01;
   gameTracker.health = 10;
   updateHud();
   gameTracker.currentGame = setInterval(dropEnemy, gameTracker.enemyInterval);
+  gameTracker.gameInProgress = true;
 }
 
 function createHudString(){
@@ -316,6 +325,31 @@ function handleEnemies(enemy){
   if(donut.position.distanceTo(enemy.position) < 2.5){
     gameTracker.score += 1;
     removeEnemy(enemy);
+  }
+}
+
+function updateEnemies(){
+  gameTracker.enemies.forEach(function(enemy){
+    enemy.position.y -= gameTracker.enemyDropRate;
+    if(enemy.position.y < -2.5){
+      gameTracker.health -= 1;
+      removeEnemy(enemy);
+    }
+    if(donut.position.distanceTo(enemy.position) < 2.5){
+      gameTracker.score += 1;
+      removeEnemy(enemy);
+    }
+  });
+}
+
+function updateGameStatus(){
+  if(gameTracker.score >= (5 * gameTracker.level)){
+    winLevel();
+    return;
+  }
+  if(gameTracker.health < 0){
+    loseGame();
+    return;
   }
 }
 
