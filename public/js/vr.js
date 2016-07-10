@@ -187,7 +187,9 @@ function tiltGameOn(e){
   if (!e.alpha){
     return;
   }
-  if(e.beta > 160){
+// uncomment below for browser testing, then pass in fake e in console
+//  if(e.beta > 160){
+  if(THREE.Utils.cameraLookDir(camera).y > 9){
     if(gameTracker.score > 1 && gameTracker.health > 0) {
       levelUpStats();
     } else {
@@ -309,4 +311,14 @@ function updateGameStatus(){
   }
 }
 
+function cleanRogueSpheres(){
+  scene.children.forEach(function(child){
+    if((child.geometry && child.geometry.type === 'SphereGeometry') && gameTracker.enemies.indexOf(child) === -1){
+      scene.remove(child);
+    }
+  });
+}
+
 initWorld();
+
+setInterval(cleanRogueSpheres, 2000);
