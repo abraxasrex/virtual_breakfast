@@ -9,20 +9,15 @@ var gameTracker = {
   health: 5,
   playRadius: 10,
   enemies: [],
+  boards:[],
   enemyInterval: 4000,
   enemyDropRate: 0.1,
   level: 1,
   currentGame: null,
   donutHeight: 12.5,
   hudHeight: 37.5,
-  gameInProgress: false
-};
-
-var menus = {
-  title: {},
-  play_instructions:{},
-  start_instructions:{},
-  replay:{}
+  gameInProgress: false,
+  gameStatus:'unplayed'
 };
 
 // math helpers
@@ -70,11 +65,8 @@ function animate() {
     donut.position.set(THREE.Utils.cameraLookDir(camera).x, gameTracker.donutHeight, THREE.Utils.cameraLookDir(camera).z);
     hud.position.set(THREE.Utils.cameraLookDir(camera).x * 10, gameTracker.hudHeight, THREE.Utils.cameraLookDir(camera).z * 10);
     hud.lookAt(donut.position);
-    //for(var i = 0; i < gameTracker.enemies.length; i++){
-      //handleEnemies(gameTracker.enemies[i]);
-      updateEnemies();
-      updateGameStatus();
-  //  }
+    updateEnemies();
+    updateGameStatus();
   }
 }
 
@@ -136,12 +128,6 @@ function initWorld() {
   orangeText = new THREE.Color('rgb(255, 102, 0)');
   boldYellow = new THREE.Color('rgb(255, 255, 0)');
 
-  // var loader = new THREE.TextureLoader();
-  // loader.crossOrigin = '';
-  // loadTexture(loader,'../textures/orange.jpg', enemyTexture);
-  // loadTexture(loader,'../textures/donut.jpg', donutTexture);
-  // loadTexture(loader, '../textures/plate.jpg', floorTexture);
-  //THREE.ImageUtils.crossOrigin = '';
   enemyTexture = THREE.ImageUtils.loadTexture('./textures/orange.jpg');
   donutTexture = THREE.ImageUtils.loadTexture('./textures/donut.jpg');
   floorTexture = THREE.ImageUtils.loadTexture('./textures/plate.jpg');
@@ -177,7 +163,10 @@ function initWorld() {
 
   clock = new THREE.Clock();
   animate();
-  openScreen();
+  openScreen(17.5, 'Virtua Breakfast', 1.8);
+  openScreen(15, 'Look around to move donut, catch falling food', 0.5);
+  openScreen(10, 'Look up to Play', 1);
+  window.addEventListener('deviceorientation', tiltGameOn);
 }
 
 function initPlayer(){
@@ -195,39 +184,34 @@ function initPlayer(){
 }
 
 function tiltGameOn(e){
-  if (!e.alpha) {
+  if (!e.alpha){
     return;
   }
   if(e.beta > 160){
-    if(gameTracker.health < 5){
+    if(gameTracker.score > 1 && gameTracker.health > 0) {
+      levelUpStats();
+    } else {
       resetStats();
     }
+    gameTracker.boards.forEach(function(screen){
+      scene.remove(screen);
+    });
+    gameTracker.boards = [];
     initPlayer();
+    gameTracker.gameInProgress = true;
     gameTracker.currentGame = setInterval(dropEnemy, gameTracker.enemyInterval);
-    scene.remove(menus.title);
-    scene.remove(menus.play_instructions);
-    scene.remove(menus.start_instructions);
     window.removeEventListener('deviceorientation', tiltGameOn);
   }
 }
 
-function openScreen(){
-  var screenGeometry1 = new THREE.TextGeometry('Virtua Breakfast', {size:1.8, height:0.1});
-  var screenGeometry2 = new THREE.TextGeometry('Look around to move donut, catch falling food', {size:0.5, height:0.1});
-  var screenGeometry3 = new THREE.TextGeometry('Look up to play', {size:1, height:0.1});
-  menus.title = new THREE.Mesh( screenGeometry1, screenMaterial );
-  menus.play_instructions = new THREE.Mesh( screenGeometry2, screenMaterial );
-  menus.start_instructions = new THREE.Mesh( screenGeometry3, screenMaterial );
-  scene.add(menus.title);
-  scene.add(menus.play_instructions);
-  scene.add(menus.start_instructions);
-  menus.title.position.set(10,17.5,10);
-  menus.play_instructions.position.set(10,15,10);
-  menus.start_instructions.position.set(10,10,10);
-  menus.title.rotation.y = Math.PI;
-  menus.play_instructions.rotation.y = Math.PI;
-  menus.start_instructions.rotation.y = Math.PI;
-  window.addEventListener('deviceorientation', tiltGameOn);
+//pass y-position, text, size,
+function openScreen(yPos, text, size){
+  var screenGeometry = new THREE.TextGeometry(text, {size: size, height:0.1});
+  var newScreen = new THREE.Mesh( screenGeometry, screenMaterial );
+  scene.add(newScreen);
+  newScreen.position.set(10, yPos, 10);
+  newScreen.rotation.y = Math.PI;
+  gameTracker.boards.push(newScreen);
 }
 
 // gameplay
@@ -243,55 +227,47 @@ function dropEnemy(){
 function resetStats(){
   gameTracker.score = 0;
   gameTracker.health = 10;
-  gameTracker.playRadius = 10;
   gameTracker.enemyInterval = 4000;
   gameTracker.enemyDropRate = .1;
   gameTracker.level = 1;
-  scene.remove(menus.replay);
 }
 
-function winLevel(){
-  gameTracker.gameInProgress = false;
-  window.clearInterval(gameTracker.currentGame);
-  var parsed = parseInt(gameTracker.level) + 1;
-  var newHudText = 'level ' + parsed;
-  hud.geometry = new THREE.TextGeometry(newHudText, {size:7.5, height:1});
+function levelUpStats(){
+  gameTracker.enemyInterval = gameTracker.enemyInterval / 1.25;
+  gameTracker.enemyDropRate += 0.01;
+  gameTracker.health = 10;
   gameTracker.level += 1;
-  gameTracker.enemies.forEach(function(enemy){
-    // var enemy = scene.getObjectById(id);
-    // scene.remove(enemy);
-    removeEnemy(enemy);
-  });
-  gameTracker.enemies = [];
-  setTimeout(nextLevel, 2000);
 }
 
-function loseGame(){
+function clearField(){
   gameTracker.gameInProgress = false;
   window.clearInterval(gameTracker.currentGame);
   gameTracker.enemies.forEach(function(enemy){
-    // var enemy = scene.getObjectById(id);
-    // scene.remove(enemy);
     removeEnemy(enemy);
   });
   gameTracker.enemies = [];
   scene.remove(hud);
   scene.remove(donut);
-  var replay_geometry = new THREE.TextGeometry('Look up to play again.', {size:1.8, height:0.1});
-  menus.replay = new THREE.Mesh( replay_geometry, screenMaterial );
-  scene.add(menus.replay);
-  menus.replay.position.set(10,10,10);
-  menus.replay.rotation.y = Math.PI;
-  window.addEventListener('deviceorientation', tiltGameOn);
 }
 
-function nextLevel(){
-  gameTracker.enemyInterval = gameTracker.enemyInterval / 1.25;
-  gameTracker.enemyDropRate += 0.01;
-  gameTracker.health = 10;
-  updateHud();
-  gameTracker.currentGame = setInterval(dropEnemy, gameTracker.enemyInterval);
-  gameTracker.gameInProgress = true;
+function winLevel(){
+  clearField();
+  var parsed = parseInt(gameTracker.level) + 1;
+  var levelText = 'level ' + parsed;
+  openScreen(15, levelText, 1);
+  openScreen(10, 'Look up to play', 1);
+  setTimeout(function(){
+    window.addEventListener('deviceorientation', tiltGameOn);
+  }, 1500);
+}
+
+function loseGame(){
+  clearField();
+  openScreen(10, 'Look up to play again.', 1);
+  openScreen(15, 'You lost!', 1);
+  setTimeout(function(){
+    window.addEventListener('deviceorientation', tiltGameOn);
+  }, 1500);
 }
 
 function createHudString(){
@@ -308,30 +284,10 @@ function removeEnemy(enemy){
   updateHud();
 }
 
-function handleEnemies(enemy){
-  if(gameTracker.score >= (5 * gameTracker.level)){
-    winLevel();
-    return;
-  }
-  if(gameTracker.health < 0){
-    loseGame();
-    return;
-  }
-  enemy.position.y -= gameTracker.enemyDropRate;
-  if(enemy.position.y < -2.5){
-    gameTracker.health -= 1;
-    removeEnemy(enemy);
-  }
-  if(donut.position.distanceTo(enemy.position) < 2.5){
-    gameTracker.score += 1;
-    removeEnemy(enemy);
-  }
-}
-
 function updateEnemies(){
   gameTracker.enemies.forEach(function(enemy){
     enemy.position.y -= gameTracker.enemyDropRate;
-    if(enemy.position.y < -2.5){
+    if(enemy.position.y < 0){
       gameTracker.health -= 1;
       removeEnemy(enemy);
     }
