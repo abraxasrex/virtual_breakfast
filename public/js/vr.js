@@ -1,7 +1,7 @@
 var element, container;
 var scene, renderer, light, lightScene, effect, controls, clock;
 var camera, floor, donut, hud;
-var sunlight, white, orangeText, boldYellow;
+var sunlight, white, orangeText;
 var enemyTexture, donutTexture, floorTexture;
 var enemyMaterial, floorMaterial, screenMaterial, donutMaterial;
 var gameTracker = {
@@ -147,12 +147,12 @@ function initWorld() {
     wrapS:THREE.RepeatWrapping,
     map: donutTexture
   });
-
-  light = new THREE.PointLight(boldYellow, 2, 100);
+  // set lighting
+  light = new THREE.PointLight(sunlight, 2, 100);
   light.position.set(50, 50, 50);
   scene.add(light);
 
-  lightScene = new THREE.AmbientLight(0x404040);
+  lightScene = new THREE.AmbientLight(white, 200);
   lightScene.position.set(0, 5, 0);
   scene.add(lightScene);
 
@@ -187,7 +187,7 @@ function tiltGameOn(e){
   if (!e.alpha){
     return;
   }
-// uncomment below for browser testing, then pass in fake e in console
+// uncomment the line below for browser testing, then pass in fake e in console
   if(e.beta > 160){
 //  if(THREE.Utils.cameraLookDir(camera).y > 9){
     if(gameTracker.score > 1 && gameTracker.health > 0) {
@@ -210,13 +210,12 @@ function tiltGameOn(e){
 function openScreen(yPos, text, size){
   var screenGeometry = new THREE.TextGeometry(text, {size: size, height:0.1});
   var newScreen = new THREE.Mesh( screenGeometry, screenMaterial );
-  // if(camera.matrix){
-  //     newScreen.position.set(THREE.Utils.cameraLookDir(camera).x, yPos, THREE.Utils.cameraLookDir(camera).z);
-  //     newScreen.lookAt(camera);
-  // } else {
+  if(camera.matrix){
+    newScreen.position.set(THREE.Utils.cameraLookDir(camera).x, yPos, THREE.Utils.cameraLookDir(camera).z);
+  } else {
     newScreen.position.set(10, yPos, 10);
-      newScreen.rotation.y = Math.PI;
-  //}
+  }
+  newScreen.lookAt(camera.position);
   scene.add(newScreen);
   gameTracker.boards.push(newScreen);
 }
