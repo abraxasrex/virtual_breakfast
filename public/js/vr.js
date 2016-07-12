@@ -133,7 +133,7 @@ function initWorld() {
   floorTexture = THREE.ImageUtils.loadTexture('./textures/plate.jpg');
 
   screenMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
-  enemyMaterial = new THREE.MeshPhongMaterial({
+  enemyMaterial = new THREE.MeshLambertMaterial({
     shading: THREE.FlatShading,
     map: enemyTexture
   });
@@ -210,9 +210,14 @@ function tiltGameOn(e){
 function openScreen(yPos, text, size){
   var screenGeometry = new THREE.TextGeometry(text, {size: size, height:0.1});
   var newScreen = new THREE.Mesh( screenGeometry, screenMaterial );
+  if(camera.matrix){
+      newScreen.position.set(THREE.Utils.cameraLookDir(camera).x, yPos, THREE.Utils.cameraLookDir(camera).z);
+      newScreen.lookAt(camera);
+  } else {
+    newScreen.position.set(10, yPos, 10);
+      newScreen.rotation.y = Math.PI;
+  }
   scene.add(newScreen);
-  newScreen.position.set(10, yPos, 10);
-  newScreen.rotation.y = Math.PI;
   gameTracker.boards.push(newScreen);
 }
 
