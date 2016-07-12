@@ -1,7 +1,6 @@
 Todo:  
 
 1. UI/UX:
-  - text always spawns  in front of you  
   - home page that redirects to
     1. stereoscope wevb vr  
     2. non stereoscoped webvr / desktop version  
