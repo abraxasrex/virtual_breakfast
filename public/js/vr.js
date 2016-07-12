@@ -6,7 +6,7 @@ var enemyTexture, donutTexture, floorTexture;
 var enemyMaterial, floorMaterial, screenMaterial, donutMaterial;
 var gameTracker = {
   score: 0,
-  health: 5,
+  health: 10,
   playRadius: 10,
   enemies: [],
   boards:[],
@@ -38,12 +38,12 @@ THREE.Utils = {
   }
 };
 
-function loadTexture(loader, texture, global_texture){
-  loader.load(texture,
-      function (texture, global_texture){
-        global_texture = texture;
-      });
-}
+// function loadTexture(loader, texture, global_texture){
+//   loader.load(texture,
+//       function (texture, global_texture){
+//         global_texture = texture;
+//       });
+// }
 
 function setOrientationControls(e) {
   if (!e.alpha) {
@@ -152,7 +152,7 @@ function initWorld() {
   light.position.set(50, 50, 50);
   scene.add(light);
 
-  lightScene = new THREE.PointLight(white, 2, 100);
+  lightScene = new THREE.AmbientLight(0x404040);
   lightScene.position.set(0, 5, 0);
   scene.add(lightScene);
 
@@ -188,8 +188,8 @@ function tiltGameOn(e){
     return;
   }
 // uncomment below for browser testing, then pass in fake e in console
-//  if(e.beta > 160){
-  if(THREE.Utils.cameraLookDir(camera).y > 9){
+  if(e.beta > 160){
+//  if(THREE.Utils.cameraLookDir(camera).y > 9){
     if(gameTracker.score > 1 && gameTracker.health > 0) {
       levelUpStats();
     } else {
@@ -210,13 +210,13 @@ function tiltGameOn(e){
 function openScreen(yPos, text, size){
   var screenGeometry = new THREE.TextGeometry(text, {size: size, height:0.1});
   var newScreen = new THREE.Mesh( screenGeometry, screenMaterial );
-  if(camera.matrix){
-      newScreen.position.set(THREE.Utils.cameraLookDir(camera).x, yPos, THREE.Utils.cameraLookDir(camera).z);
-      newScreen.lookAt(camera);
-  } else {
+  // if(camera.matrix){
+  //     newScreen.position.set(THREE.Utils.cameraLookDir(camera).x, yPos, THREE.Utils.cameraLookDir(camera).z);
+  //     newScreen.lookAt(camera);
+  // } else {
     newScreen.position.set(10, yPos, 10);
       newScreen.rotation.y = Math.PI;
-  }
+  //}
   scene.add(newScreen);
   gameTracker.boards.push(newScreen);
 }
