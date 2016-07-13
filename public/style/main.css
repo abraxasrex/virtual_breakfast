@@ -11,16 +11,32 @@ body {
   background-color:#ffcc00;
     font-family: 'Open Sans', sans-serif;
 }
+
+li a {
+  color:inherit;
+  text-decoration: none;
+  background-color: inherit;
+  height: 100%;
+  width: 100%;
+  display: block;
+ }
+
+ li a:hover {
+   box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
+ }
+
 header {
   text-align: center;
   width: 75%;
   float:right;
   margin: 10px 0;
 }
+
 nav, ul {
   margin: 0;
   padding: 0;
 }
+
 main {
   text-align: center;
   font-size: 25px;
@@ -42,6 +58,31 @@ main {
   /*border: solid 2px #CE284F;*/
   background-image: url(../textures/donut3.jpg);
 }
+
+@-webkit-keyframes SPIN {
+  0%   { transform:rotateZ(0deg); }
+  100% { transform:rotateZ(90deg); }
+}
+@-moz-keyframes SPIN {
+  0%   { otransform:rotateZ(90deg); }
+  100% { transform:rotateZ(180deg); }
+}
+@-o-keyframes SPIN {
+  0%   { transform:rotateZ(180deg); }
+  100% { transform:rotateZ(270deg); }
+}
+@keyframes SPIN {
+  0%   { transform:rotateZ(270deg); }
+  100% { transform:rotateZ(360deg); }
+}
+
+.donut:hover {
+  -webkit-animation: SPIN 5s infinite; /* Safari 4+ */
+  -moz-animation:    SPIN 5s infinite; /* Fx 5+ */
+  -o-animation:      SPIN 5s infinite; /* Opera 12+ */
+  animation:         SPIN 5s infinite; /* IE 10+, Fx 29+ */
+}
+
 .donut-hole {
   background-color: #ffcc00;
   height: 150px;
@@ -50,11 +91,13 @@ main {
   border-radius: 50%;
   margin: 0 auto;
 }
+
 aside {
   width: 25%;
   float: left;
   margin: 0 0;
 }
+
 aside li {
   list-style-type: none;
   display: block;
@@ -86,6 +129,10 @@ li:nth-of-type(5){
   background-color: #640963;
 }
 
+.lesser {
+  font-size: 18px;
+}
+
 .green {
   color:#C2D53C;
 }
@@ -105,11 +152,15 @@ p {
 
 button {
  width: 250px;
-  margin: 5px;
+  margin: 20px 10px 20px 10px;
   background-color:#C2D53C;
   border:none;
   border-radius: 5px;
   font-size: 25px;
   height: 200px;
   padding: 0;
+}
+
+button:hover {
+   box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.1);
 }
