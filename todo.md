@@ -1,10 +1,7 @@
-faTodo:  
+Todo:  
 
 1. UI/UX:
-  - home page that redirects to
-    1. stereoscope wevb vr  
-    2. non stereoscoped webvr / desktop version  
-  - better instructions  
+  - phone instructions  
   - safe image sources  
 
 2. Stretch  

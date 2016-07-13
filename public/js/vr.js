@@ -17,7 +17,8 @@ var gameTracker = {
   donutHeight: 12.5,
   hudHeight: 37.5,
   gameInProgress: false,
-  gameStatus:'unplayed'
+  gameStatus:'unplayed',
+  stereo:true
 };
 
 // math helpers
@@ -37,13 +38,6 @@ THREE.Utils = {
     return vector;
   }
 };
-
-// function loadTexture(loader, texture, global_texture){
-//   loader.load(texture,
-//       function (texture, global_texture){
-//         global_texture = texture;
-//       });
-// }
 
 function setOrientationControls(e) {
   if (!e.alpha) {
@@ -76,7 +70,9 @@ function resize() {
   camera.aspect = width / height;
   camera.updateProjectionMatrix();
   renderer.setSize(width, height);
-  effect.setSize(width, height);
+  if(!!gameTracker.stereo){
+    effect.setSize(width, height);
+  }
 }
 
 function update(dt) {
@@ -86,7 +82,12 @@ function update(dt) {
 }
 
 function render() {
-  effect.render(scene, camera);
+  if(!!gameTracker.stereo){
+    effect.render(scene, camera);
+  } else {
+    renderer.render(scene, camera);
+  }
+
 }
 
 function fullscreen() {
@@ -113,7 +114,10 @@ function initWorld() {
   container = document.getElementById('webglviewer');
   container.appendChild(element);
 
-  effect = new THREE.StereoEffect(renderer);
+  //check if cardboard
+  if(!!gameTracker.stereo){
+    effect = new THREE.StereoEffect(renderer);
+  }
 
   // controls fallback
   controls = new THREE.OrbitControls(camera, element);
@@ -129,7 +133,7 @@ function initWorld() {
   boldYellow = new THREE.Color('rgb(255, 255, 0)');
 
   enemyTexture = THREE.ImageUtils.loadTexture('./textures/orange.jpg');
-  donutTexture = THREE.ImageUtils.loadTexture('./textures/donut.jpg');
+  donutTexture = THREE.ImageUtils.loadTexture('./textures/donut3.jpg');
   floorTexture = THREE.ImageUtils.loadTexture('./textures/plate.jpg');
 
   screenMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
@@ -188,8 +192,8 @@ function tiltGameOn(e){
     return;
   }
 // uncomment the line below for browser testing, then pass in fake e in console
-  if(e.beta > 160){
-//  if(THREE.Utils.cameraLookDir(camera).y > 9){
+//  if(e.beta > 160){
+  if(THREE.Utils.cameraLookDir(camera).y > 9){
     if(gameTracker.score > 1 && gameTracker.health > 0) {
       levelUpStats();
     } else {
@@ -322,6 +326,12 @@ function cleanRogueSpheres(){
     }
   });
 }
+
+(function checkStereo(){
+  if(window.location.search === "?no_stereo"){
+    gameTracker.stereo = false;
+  }
+})();
 
 initWorld();
 
