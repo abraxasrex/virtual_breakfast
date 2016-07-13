@@ -1,4 +1,6 @@
-/*#2F149E
+/*
+#ffcc00
+#2F149E
 #F8E3BC
 #CE284F
 #640963
@@ -6,35 +8,108 @@
 
 body {
   min-height: 500px;
-  background-color:white;
+  background-color:#ffcc00;
+    font-family: 'Open Sans', sans-serif;
 }
-.palette {
-  width: 50px;
-  height: 50px;
+header {
+  text-align: center;
+  width: 75%;
+  float:right;
+  margin: 10px 0;
 }
-.palette:nth-of-type(1){
+nav, ul {
+  margin: 0;
+  padding: 0;
+}
+main {
+  text-align: center;
+  font-size: 25px;
+  margin: 0 auto;
+  width: 75%;
+  float: right;
+}
+
+.donut{
+  margin: 0 auto;
+  width: 300px;
+  height: 300px;
+  border-radius:50%;
+  background-color:#F8E3BC;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /*border: solid 2px #CE284F;*/
+  background-image: url(../textures/donut.jpg);
+}
+.donut-hole {
+  background-color: #ffcc00;
+  height: 150px;
+  width: 150px;
+  z-index: 1;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+aside {
+  width: 25%;
+  float: left;
+  margin: 0 0;
+}
+aside li {
+  list-style-type: none;
+  display: block;
+  width: 100%;
+  height: 200px;
+  text-align: center;
+  font-size: 32px;
+  line-height: 200px;
+  vertical-align: middle;
+}
+
+li:nth-of-type(1){
   background-color: #2F149E;
 }
 
-.palette:nth-of-type(2){
-  background-color: #F8E3BC;
-}
-
-.palette:nth-of-type(3){
-  background-color: #CE284F;
-}
-
-.palette:nth-of-type(4){
-  background-color: #640963;
-}
-
-.palette:nth-of-type(5){
+li:nth-of-type(2){
   background-color: #C2D53C;
 }
 
-.test-pill{
-  background-color: red;
-  height: 25px;
-  width:75px;
-  border-radius:         25%  25%  25%  25%  / 60%   60%   60%  60%;
+li:nth-of-type(3){
+  background-color: #CE284F;
+}
+
+li:nth-of-type(4){
+  background-color: #F8E3BC;
+}
+
+li:nth-of-type(5){
+  background-color: #640963;
+}
+
+.green {
+  color:#C2D53C;
+}
+
+.purple {
+  color:#640963;
+}
+
+.blue {
+  color:#2F149E;
+}
+
+p {
+  width: 50%;
+  margin: 0 auto;
+}
+
+button {
+ width: 250px;
+  margin: 5px;
+  background-color:#C2D53C;
+  border:none;
+  border-radius: 5px;
+  font-size: 25px;
+  height: 200px;
+  padding: 0;
 }
