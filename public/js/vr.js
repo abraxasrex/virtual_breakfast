@@ -274,7 +274,7 @@ function winLevel(){
 function loseGame(){
   clearField();
   openScreen(10, 'Look up to play again.', 1);
-  openScreen(15, 'You lost!', 1);
+  openScreen(15, 'You lost! Final score:' + gameTracker.score, 1);
   setTimeout(function(){
     window.addEventListener('deviceorientation', tiltGameOn);
   }, 1500);

@@ -1,0 +1,27 @@
+{
+  "name": "virtua_breakfast",
+  "version":"0.0.1",
+  "main": "server.js",
+  "scripts": {
+    "start" : "node server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4",
+    "method-override" : "~2.1.2",
+    "mongoose": "^4.4.5",
+    "morgan": "^1.7.0",
+    "chai":"^3.5.0",
+    "mocha":"^2.5.3"
+  },
+  "repository":{
+    "type":"git",
+    "url":"https://github.com/abraxasrex/virtual_breakfast"
+  },
+  "author":"Jonathan Reasor",
+  "keywords":[
+    "VR",
+    "Three.js",
+    "games"
+  ]
+}
