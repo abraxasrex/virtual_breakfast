@@ -1,0 +1,40 @@
+/*#2F149E
+#F8E3BC
+#CE284F
+#640963
+#C2D53C*/
+
+body {
+  min-height: 500px;
+  background-color:white;
+}
+.palette {
+  width: 50px;
+  height: 50px;
+}
+.palette:nth-of-type(1){
+  background-color: #2F149E;
+}
+
+.palette:nth-of-type(2){
+  background-color: #F8E3BC;
+}
+
+.palette:nth-of-type(3){
+  background-color: #CE284F;
+}
+
+.palette:nth-of-type(4){
+  background-color: #640963;
+}
+
+.palette:nth-of-type(5){
+  background-color: #C2D53C;
+}
+
+.test-pill{
+  background-color: red;
+  height: 25px;
+  width:75px;
+  border-radius:         25%  25%  25%  25%  / 60%   60%   60%  60%;
+}

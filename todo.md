@@ -1,4 +1,4 @@
-Todo:  
+faTodo:  
 
 1. UI/UX:
   - home page that redirects to
