@@ -55,7 +55,6 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /*border: solid 2px #CE284F;*/
   background-image: url(../textures/donut3.jpg);
 }
 

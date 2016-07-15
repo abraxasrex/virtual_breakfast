@@ -1,3 +1,7 @@
+// the boilerplate for this project is based on Patrick Catanzariti's
+// VR tutorial: https://www.sitepoint.com/bringing-vr-to-web-google-cardboard-three-js/
+//which is likely based upon the three.js boilerplate specified in the WebVR API protocols
+
 var element, container;
 var scene, renderer, light, lightScene, effect, controls, clock;
 var camera, floor, donut, hud;
@@ -21,7 +25,6 @@ var gameTracker = {
   stereo:true
 };
 
-// math helpers
 function randomDegree(){
   return Math.random() * 360;
 }
@@ -133,8 +136,10 @@ function initWorld() {
   boldYellow = new THREE.Color('rgb(255, 255, 0)');
 
   enemyTexture = THREE.ImageUtils.loadTexture('./textures/orange.jpg');
-  donutTexture = THREE.ImageUtils.loadTexture('./textures/donut3.jpg');
-  floorTexture = THREE.ImageUtils.loadTexture('./textures/plate.jpg');
+  donutTexture = THREE.ImageUtils.loadTexture('./textures/donut2.jpg');
+  // donut texture from doki-edits
+  //http://doki-edits.deviantart.com/art/Kawaii-Donut-Texture-526017845
+  floorTexture = THREE.ImageUtils.loadTexture('./textures/table2.jpg');
 
   screenMaterial = new THREE.MeshBasicMaterial({ color: orangeText });
   enemyMaterial = new THREE.MeshLambertMaterial({
@@ -151,7 +156,7 @@ function initWorld() {
     wrapS:THREE.RepeatWrapping,
     map: donutTexture
   });
-  // set lighting
+
   light = new THREE.PointLight(sunlight, 2, 100);
   light.position.set(50, 50, 50);
   scene.add(light);
@@ -177,7 +182,7 @@ function initPlayer(){
   var donutGeometry = new THREE.TorusGeometry( 2.5, 0.75, 100, 100);
   donut = new THREE.Mesh( donutGeometry, donutMaterial );
   donut.position.set(0,12.5,5);
-  donut.rotation.x = -1;
+  donut.rotation.x = 1;
   scene.add(donut);
 
   var newHudText = new THREE.TextGeometry(createHudString(), {size:7.5, height:1});
@@ -193,7 +198,7 @@ function tiltGameOn(e){
   }
 // uncomment the line below for browser testing, then pass in fake e in console
   if(e.beta > 160){
-//  if(THREE.Utils.cameraLookDir(camera).y > 9){
+//  if(THREE.Utils.cameraLookDir(camera).y > 8){
     if(gameTracker.score > 1 && gameTracker.health > 0) {
       levelUpStats();
     } else {
@@ -274,7 +279,7 @@ function winLevel(){
 function loseGame(){
   clearField();
   openScreen(10, 'Look up to play again.', 1);
-  openScreen(15, 'You lost! Final score:' + gameTracker.score, 1);
+  openScreen(15, 'You lost! Final score: ' + gameTracker.score, 1);
   setTimeout(function(){
     window.addEventListener('deviceorientation', tiltGameOn);
   }, 1500);

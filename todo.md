@@ -1,7 +1,6 @@
 Todo:  
 
 1. UI/UX:
-  - phone instructions  
   - safe image sources  
 
 2. Stretch  
