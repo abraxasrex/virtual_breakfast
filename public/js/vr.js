@@ -196,9 +196,9 @@ function tiltGameOn(e){
   if (!e.alpha){
     return;
   }
-// uncomment the line below for browser testing, then pass in fake e in console
-  if(e.beta > 160){
-//  if(THREE.Utils.cameraLookDir(camera).y > 8){
+// uncomment the line below for desktop browser testing, then pass in fake e in console
+//  if(e.beta > 160){
+  if(THREE.Utils.cameraLookDir(camera).y > 8){
     if(gameTracker.score > 1 && gameTracker.health > 0) {
       levelUpStats();
     } else {
