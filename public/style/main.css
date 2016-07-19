@@ -12,19 +12,6 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
-li a {
-  color:inherit;
-  text-decoration: none;
-  background-color: inherit;
-  height: 100%;
-  width: 100%;
-  display: block;
- }
-
- li a:hover {
-   box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
- }
-
 header {
   text-align: center;
   width: 75%;
@@ -45,6 +32,19 @@ main {
   float: right;
 }
 
+li a {
+  color:inherit;
+  text-decoration: none;
+  background-color: inherit;
+  height: 100%;
+  width: 100%;
+  display: block;
+ }
+
+ li a:hover {
+   box-shadow: inset 0 0 100px 100px rgba(255, 255, 255, 0.3);
+ }
+
 .donut{
   margin: 0 auto;
   width: 300px;
@@ -56,6 +56,22 @@ main {
   flex-direction: column;
   justify-content: center;
   background-image: url(../textures/donut3.jpg);
+}
+
+.donut:hover {
+  -webkit-animation: SPIN 5s infinite; /* Safari 4+ */
+  -moz-animation:    SPIN 5s infinite; /* Fx 5+ */
+  -o-animation:      SPIN 5s infinite; /* Opera 12+ */
+  animation:         SPIN 5s infinite; /* IE 10+, Fx 29+ */
+}
+
+.donut-hole {
+  background-color: #ffcc00;
+  height: 150px;
+  width: 150px;
+  z-index: 1;
+  border-radius: 50%;
+  margin: 0 auto;
 }
 
 @-webkit-keyframes SPIN {
@@ -73,22 +89,6 @@ main {
 @keyframes SPIN {
   0%   { transform:rotateZ(270deg); }
   100% { transform:rotateZ(360deg); }
-}
-
-.donut:hover {
-  -webkit-animation: SPIN 5s infinite; /* Safari 4+ */
-  -moz-animation:    SPIN 5s infinite; /* Fx 5+ */
-  -o-animation:      SPIN 5s infinite; /* Opera 12+ */
-  animation:         SPIN 5s infinite; /* IE 10+, Fx 29+ */
-}
-
-.donut-hole {
-  background-color: #ffcc00;
-  height: 150px;
-  width: 150px;
-  z-index: 1;
-  border-radius: 50%;
-  margin: 0 auto;
 }
 
 aside {
@@ -128,7 +128,7 @@ li:nth-of-type(5){
   background-color: #640963;
 }
 
-.lesser {
+.asterisk {
   font-size: 18px;
 }
 
@@ -144,7 +144,7 @@ li:nth-of-type(5){
   color:#2F149E;
 }
 
-p {
+main p {
   width: 50%;
   margin: 0 auto;
 }
