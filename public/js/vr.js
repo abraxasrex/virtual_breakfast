@@ -185,7 +185,6 @@ function initPlayer(){
   donut.position.set(0,12.5,5);
   donut.rotation.x = 1;
   scene.add(donut);
-
   var newHudText = new THREE.TextGeometry(createHudString(), {size:7.5, height:1});
   hud = new THREE.Mesh( newHudText, screenMaterial );
   scene.add(hud);
@@ -215,7 +214,6 @@ function tiltGameOn(e){
   }
 }
 
-//pass y-position, text, size,
 function openScreen(yPos, text, size, init){
   var screenGeometry = new THREE.TextGeometry(text, {size: size, height:0.1});
   var newScreen = new THREE.Mesh( screenGeometry, screenMaterial );
@@ -233,7 +231,6 @@ function openScreen(yPos, text, size, init){
   gameTracker.boards.push(newScreen);
 }
 
-// gameplay
 function dropEnemy(){
   var geometry = new THREE.SphereGeometry(1, 64, 64);
   var newEnemy = new THREE.Mesh( geometry, enemyMaterial );
@@ -343,5 +340,13 @@ function cleanRogueSpheres(){
 })();
 
 initWorld();
-
 setInterval(cleanRogueSpheres, 2000);
+
+// Ioulian Alexeev's screen sleep prevention:
+//http://stackoverflow.com/questions/18905413/how-can-i-prevent-iphone-including-ios-7-from-going-to-sleep-in-html-or-js
+setInterval(function () {
+  window.location.href = "/new/page";
+  window.setTimeout(function () {
+    window.stop();
+  }, 0);
+}, 30000);
